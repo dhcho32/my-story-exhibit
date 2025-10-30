@@ -320,13 +320,11 @@ export default function SongPage() {
     <Section>
       {/* 페이지 제목 */}
       <PageTitle>노래</PageTitle>
-      
-      {/* 콘텐츠 그리드 - 가사와 오디오 섹션 */}
+            {/* 콘텐츠 그리드 - 가사와 오디오 섹션 */}
       <ContentGrid>
         {/* 가사 섹션 */}
         <SectionContainer>
-          <SectionTitle>글</SectionTitle>
-          <Grid>
+               <Grid>
             {/* 가사 목록 렌더링 - map으로 반복 */}
             {songTexts.map((text) => (
               <TextCard key={text.id}>
@@ -339,7 +337,7 @@ export default function SongPage() {
         
         {/* 오디오 섹션 */}
         <SectionContainer>
-          <SectionTitle>노래</SectionTitle>
+          <SectionTitle>음악</SectionTitle>
           <Grid>
             {/* 오디오 목록 렌더링 - 커스텀 플레이어 사용 */}
             {songAudio.map((audio) => (
