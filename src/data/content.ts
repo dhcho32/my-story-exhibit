@@ -1,10 +1,6 @@
 // 점선면 페이지 데이터
 export const dotlineImages = [
-  { title: '점선면 이미지 1', src: '/images/내 인생의 그래프 1.jpg' },
-  
-  { title: '점선면 이미지 1', src: '/images/내 인생의 그래프 2.jpg' },
-  
-  { title: '점선면 이미지 1', src: '/images/내 인생의 그래프 3.jpg' },
+  { title: '점선면 이미지 1', src: '/images/lg05.png' },
 
 ]
 
