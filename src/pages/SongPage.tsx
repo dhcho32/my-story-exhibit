@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from 'react'
 import { songTexts, songAudio } from '../data/content'
 
 // ===== STYLED COMPONENTS =====
-// 페이지 전체 섹션
+// 페이지 전체 섹션 - 시 페이지와 동일한 스타일
 const Section = styled.section`
   padding: 2rem 0;  // 상하 패딩
 `

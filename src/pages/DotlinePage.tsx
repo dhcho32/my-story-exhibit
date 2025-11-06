@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from 'react'
 import { dotlineImages, dotlineAudio } from '../data/content'
 
 // ===== STYLED COMPONENTS =====
-// 페이지 전체 섹션
+// 페이지 전체 섹션 - 시 페이지와 동일한 스타일
 const Section = styled.section`
   padding: 2rem 0;  // 상하 패딩
 `
@@ -102,9 +102,11 @@ const ImageGrid = styled.div`
   gap: 0.5rem;
   overflow-x: auto;
   
-  // 모바일 반응형 - 가로 스크롤
+  // 모바일 반응형 - 세로 배치
   @media (max-width: 768px) {
-    gap: 0.3rem;
+    flex-direction: column;
+    overflow-x: visible;
+    gap: 1rem;
   }
 `
 
@@ -133,9 +135,10 @@ const ImageCard = styled(Card)`
   
   // 모바일 반응형
   @media (max-width: 768px) {
-    padding: 0.3rem;
-    flex: 0 0 auto;
-    min-width: 300px;
+    padding: 0.5rem;
+    width: 100%;
+    flex: none;
+    min-width: unset;
   }
 `
 
@@ -148,9 +151,17 @@ const Image = styled.img`
   transition: transform 0.3s ease;
   display: block;
   cursor: pointer;
+  object-fit: contain;
   
   &:hover {
     transform: scale(1.02);  // 2% 확대
+  }
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 100%;
+    object-fit: contain;
   }
 `
 
