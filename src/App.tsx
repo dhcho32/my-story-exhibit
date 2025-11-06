@@ -2,6 +2,8 @@
 import { Link, NavLink, Outlet, Route, Routes } from 'react-router-dom'
 // Styled Components - CSS-in-JS 스타일링 라이브러리
 import styled from 'styled-components'
+// React Hooks - 상태 관리
+import { useState, useEffect } from 'react'
 // 각 페이지 컴포넌트들 import
 import DotlinePage from './pages/DotlinePage'
 import PoetryPage from './pages/PoetryPage'
@@ -83,27 +85,92 @@ const Main = styled.main`
   padding: 2rem 0;   // 상하 패딩
 `
 
+// 스크롤 진행 막대 컨테이너 - 페이지 최상단 고정
+const ProgressBarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  overflow: hidden;
+`
+
+// 스크롤 진행 막대 - 진행률에 따라 채워짐
+const ProgressBar = styled.div<{ progress: number }>`
+  height: 100%;
+  width: ${props => props.progress}%;
+  background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 10px rgba(255, 126, 179, 0.5);
+`
+
+// ===== SCROLL PROGRESS COMPONENT =====
+// 스크롤 진행률을 표시하는 컴포넌트
+function ScrollProgress() {
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight
+      const documentHeight = document.documentElement.scrollHeight
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      
+      // 스크롤 가능한 전체 높이
+      const scrollableHeight = documentHeight - windowHeight
+      
+      // 진행률 계산 (0-100%)
+      const progress = scrollableHeight > 0 
+        ? (scrollTop / scrollableHeight) * 100 
+        : 0
+      
+      setScrollProgress(Math.min(100, Math.max(0, progress)))
+    }
+
+    // 스크롤 이벤트 리스너 추가
+    window.addEventListener('scroll', handleScroll)
+    // 초기 진행률 계산
+    handleScroll()
+
+    // 클린업 함수
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  return (
+    <ProgressBarContainer>
+      <ProgressBar progress={scrollProgress} />
+    </ProgressBarContainer>
+  )
+}
+
 // ===== LAYOUT COMPONENT =====
 // 전체 레이아웃을 담당하는 컴포넌트
 function Layout() {
   return (
-    <Container>
-      {/* 헤더 영역 - 브랜드와 네비게이션 */}
-      <Header>
-        {/* 브랜드 로고 - 홈으로 이동하는 링크 */}
-        <Brand to="/">My Story Exhibit</Brand>
-        {/* 네비게이션 메뉴 */}
-        <Nav>
-          <NavLinkStyled to="/dotline">인생그래프</NavLinkStyled>
-          <NavLinkStyled to="/poetry">시</NavLinkStyled>
-          <NavLinkStyled to="/song">노래</NavLinkStyled>
-        </Nav>
-      </Header>
-      {/* 메인 콘텐츠 영역 - Outlet으로 하위 페이지 렌더링 */}
-      <Main>
-        <Outlet />
-      </Main>
-    </Container>
+    <>
+      {/* 스크롤 진행 막대 */}
+      <ScrollProgress />
+      <Container>
+        {/* 헤더 영역 - 브랜드와 네비게이션 */}
+        <Header>
+          {/* 브랜드 로고 - 홈으로 이동하는 링크 */}
+          <Brand to="/">My Story Exhibit</Brand>
+          {/* 네비게이션 메뉴 */}
+          <Nav>
+            <NavLinkStyled to="/dotline">인생그래프</NavLinkStyled>
+            <NavLinkStyled to="/poetry">시</NavLinkStyled>
+            <NavLinkStyled to="/song">노래</NavLinkStyled>
+          </Nav>
+        </Header>
+        {/* 메인 콘텐츠 영역 - Outlet으로 하위 페이지 렌더링 */}
+        <Main>
+          <Outlet />
+        </Main>
+      </Container>
+    </>
   )
 }
 

@@ -1,6 +1,8 @@
 // ===== IMPORTS =====
 // Styled Components - CSS-in-JS 스타일링
 import styled from 'styled-components'
+// React Hooks - 상태 관리와 DOM 참조
+import { useState, useEffect } from 'react'
 // 데이터 import - 시 페이지용 이미지와 텍스트 데이터
 import { poetryImages, poetryTexts } from '../data/content'
 
@@ -97,15 +99,111 @@ const ImageCard = styled(Card)`
   text-align: center;
 `
 
-// 이미지 스타일 - 호버 시 확대 효과
+// 이미지 스타일 - 호버 시 확대 효과, 클릭 가능
 const Image = styled.img`
   width: 100%;
   border-radius: 8px;
   margin-bottom: 1rem;
   transition: transform 0.3s ease;
+  cursor: pointer;
   
   &:hover {
     transform: scale(1.02);  // 2% 확대
+  }
+`
+
+// 모달 오버레이 - 배경 어둡게
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`
+
+// 모달 컨테이너 - 이미지 크게 표시
+const ModalContainer = styled.div`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  animation: zoomIn 0.3s ease;
+  
+  @keyframes zoomIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+`
+
+// 모달 이미지
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+`
+
+// 닫기 버튼
+const CloseButton = styled.button`
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #333;
+  transition: all 0.3s ease;
+  z-index: 1001;
+  
+  &:hover {
+    background: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    top: -35px;
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
   }
 `
 
@@ -121,26 +219,83 @@ const TextCard = styled(Card)`
   text-align: left;
 `
 
-// 텍스트 제목
+// 텍스트 제목 - 더 크고 눈에 띄는 색상
 const TextTitle = styled.h4`
-  margin: 0 0 1rem 0;
-  color: #2c3e50;
-  font-size: 1.3rem;
-  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  color: #ff4da6;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+  }
 `
 
-// 텍스트 내용 - 줄바꿈 보존
+// 텍스트 내용 - 읽기 편한 크기와 색상
 const TextContent = styled.p`
-  color: #495057;
-  line-height: 1.8;  // 줄 간격
-  font-size: 1rem;
+  color: #2d3748;
+  line-height: 2;  // 줄 간격 (읽기 편하게)
+  font-size: 1.15rem;
   margin: 0;
   white-space: pre-wrap;  // 줄바꿈과 공백 보존
+  text-align: left;
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 1.05rem;
+    line-height: 1.9;
+  }
 `
 
 // ===== MAIN COMPONENT =====
 // 시 페이지 메인 컴포넌트 - 이미지와 시를 표시
 export default function PoetryPage() {
+  // 모달 상태 관리
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedImage(null)
+      }
+    }
+
+    if (selectedImage) {
+      document.addEventListener('keydown', handleEscape)
+      // 모달이 열려있을 때 body 스크롤 방지
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedImage])
+
+  // 이미지 클릭 핸들러
+  const handleImageClick = (src: string) => {
+    setSelectedImage(src)
+  }
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setSelectedImage(null)
+  }
+
+  // 배경 클릭 핸들러 (이미지가 아닌 부분 클릭 시)
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      handleCloseModal()
+    }
+  }
+
   return (
     <Section>
       {/* 콘텐츠 그리드 - 이미지와 시 섹션 */}
@@ -152,7 +307,11 @@ export default function PoetryPage() {
             {/* 이미지 목록 렌더링 - map으로 반복 */}
             {poetryImages.map((img) => (
               <ImageCard key={img.id}>
-                <Image src={img.src} alt={img.title} />
+                <Image 
+                  src={img.src} 
+                  alt={img.title}
+                  onClick={() => handleImageClick(img.src)}
+                />
               </ImageCard>
             ))}
           </Grid>
@@ -171,6 +330,20 @@ export default function PoetryPage() {
           </Grid>
         </SectionContainer>
       </ContentGrid>
+
+      {/* 이미지 모달 */}
+      {selectedImage && (
+        <ModalOverlay onClick={handleOverlayClick}>
+          <ModalContainer>
+            <CloseButton onClick={handleCloseModal}>×</CloseButton>
+            <ModalImage 
+              src={selectedImage} 
+              alt="확대된 이미지"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </ModalContainer>
+        </ModalOverlay>
+      )}
     </Section>
   )
 }

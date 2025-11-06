@@ -2,7 +2,7 @@
 // Styled Components - CSS-in-JS 스타일링
 import styled from 'styled-components'
 // React Hooks - 상태 관리와 DOM 참조
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 // 데이터 import - 노래 페이지용 텍스트와 오디오 데이터
 import { songTexts, songAudio } from '../data/content'
 
@@ -12,16 +12,23 @@ const Section = styled.section`
   padding: 2rem 0;  // 상하 패딩
 `
 
-// 페이지 제목 - 그라데이션 텍스트 효과
+// 페이지 제목 - 더 크고 눈에 띄는 색상
 const PageTitle = styled.h2`
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   text-align: center;
   margin-bottom: 3rem;
+  font-weight: 700;
   // 그라데이션 텍스트 효과
-  background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+  background: linear-gradient(135deg, #ff4da6 0%, #ff758c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 2px 10px rgba(255, 77, 166, 0.2);
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
 `
 
 // 콘텐츠 그리드 - 섹션들 간의 간격
@@ -44,13 +51,18 @@ const SectionContainer = styled.div`
   border: 1px solid #f0f0f0;  // 연한 테두리
 `
 
-// 섹션 제목 - 하단에 장식선 추가
+// 섹션 제목 - 더 크고 눈에 띄는 색상
 const SectionTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #2c3e50;
+  font-size: 2rem;
   margin-bottom: 1.5rem;
   text-align: center;
   position: relative;
+  font-weight: 700;
+  // 그라데이션 텍스트 효과
+  background: linear-gradient(135deg, #ff4da6 0%, #ff758c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   
   // 하단 장식선 (::after 가상 요소)
   &::after {
@@ -59,10 +71,15 @@ const SectionTitle = styled.h3`
     bottom: -8px;
     left: 50%;
     transform: translateX(-50%);  // 중앙 정렬
-    width: 50px;
-    height: 3px;
+    width: 80px;
+    height: 4px;
     background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
     border-radius: 2px;
+  }
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
   }
 `
 
@@ -99,21 +116,38 @@ const TextCard = styled(Card)`
   text-align: left;
 `
 
-// 텍스트 제목
+// 텍스트 제목 - 더 크고 눈에 띄는 색상
 const TextTitle = styled.h4`
-  margin: 0 0 1rem 0;
-  color: #2c3e50;
-  font-size: 1.3rem;
-  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  color: #ff4da6;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+  }
 `
 
-// 텍스트 내용 - 줄바꿈 보존
+// 텍스트 내용 - 읽기 편한 크기와 색상
 const TextContent = styled.p`
-  color: #495057;
-  line-height: 1.8;  // 줄 간격
-  font-size: 1rem;
+  color: #2d3748;
+  line-height: 2;  // 줄 간격 (읽기 편하게)
+  font-size: 1.15rem;
   margin: 0;
   white-space: pre-wrap;  // 줄바꿈과 공백 보존
+  text-align: left;
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 1.05rem;
+    line-height: 1.9;
+  }
 `
 
 // 오디오 카드 - 중앙 정렬
@@ -173,17 +207,21 @@ const AudioInfo = styled.div`
   color: white;
 `
 
-// 오디오 제목
+// 오디오 제목 - 읽기 편한 크기와 색상
 const AudioTitle = styled.div`
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  color: white;
+  letter-spacing: 0.5px;
 `
 
-// 시간 표시 (현재 시간 / 전체 시간)
+// 시간 표시 (현재 시간 / 전체 시간) - 읽기 편한 크기와 색상
 const TimeDisplay = styled.div`
-  font-size: 0.9rem;
-  opacity: 0.9;  // 약간 투명하게
+  font-size: 1rem;
+  opacity: 0.95;  // 약간 투명하게
+  color: white;
+  letter-spacing: 0.3px;
 `
 
 // 진행률 바 컨테이너 - 클릭 가능
@@ -208,6 +246,101 @@ const Progress = styled.div<{ progress: number }>`
 // 숨겨진 오디오 요소 - 실제 재생 담당
 const HiddenAudio = styled.audio`
   display: none;  // 화면에 보이지 않음
+`
+
+// 모달 오버레이 - 배경 어둡게
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+`
+
+// 모달 컨테이너 - 이미지 크게 표시
+const ModalContainer = styled.div`
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  animation: zoomIn 0.3s ease;
+  
+  @keyframes zoomIn {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+`
+
+// 모달 이미지
+const ModalImage = styled.img`
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+`
+
+// 닫기 버튼
+const CloseButton = styled.button`
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #333;
+  transition: all 0.3s ease;
+  z-index: 1001;
+  
+  &:hover {
+    background: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    top: -35px;
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
+  }
 `
 
 // ===== TYPES =====
@@ -316,6 +449,41 @@ function AudioPlayerComponent({ audio }: { audio: AudioItem }) {
 // ===== MAIN COMPONENT =====
 // 노래 페이지 메인 컴포넌트 - 가사와 오디오를 표시
 export default function SongPage() {
+  // 모달 상태 관리
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  // ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedImage(null)
+      }
+    }
+
+    if (selectedImage) {
+      document.addEventListener('keydown', handleEscape)
+      // 모달이 열려있을 때 body 스크롤 방지
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedImage])
+
+  // 모달 닫기 핸들러
+  const handleCloseModal = () => {
+    setSelectedImage(null)
+  }
+
+  // 배경 클릭 핸들러 (이미지가 아닌 부분 클릭 시)
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      handleCloseModal()
+    }
+  }
+
   return (
     <Section>
       {/* 페이지 제목 */}
@@ -348,6 +516,20 @@ export default function SongPage() {
           </Grid>
         </SectionContainer>
       </ContentGrid>
+
+      {/* 이미지 모달 */}
+      {selectedImage && (
+        <ModalOverlay onClick={handleOverlayClick}>
+          <ModalContainer>
+            <CloseButton onClick={handleCloseModal}>×</CloseButton>
+            <ModalImage 
+              src={selectedImage} 
+              alt="확대된 이미지"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </ModalContainer>
+        </ModalOverlay>
+      )}
     </Section>
   )
 }
