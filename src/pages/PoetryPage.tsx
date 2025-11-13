@@ -33,13 +33,18 @@ const SectionContainer = styled.div`
   border: 1px solid #f0f0f0;  // 연한 테두리
 `
 
-// 섹션 제목 - 하단에 장식선 추가
+// 섹션 제목 - 더 크고 눈에 띄는 색상
 const SectionTitle = styled.h3`
-  font-size: 1.5rem;
-  color: #2c3e50;
+  font-size: 2rem;
   margin-bottom: 1.5rem;
   text-align: center;
   position: relative;
+  font-weight: 700;
+  // 그라데이션 텍스트 효과
+  background: linear-gradient(135deg, #ff4da6 0%, #ff758c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   
   // 하단 장식선 (::after 가상 요소)
   &::after {
@@ -48,10 +53,15 @@ const SectionTitle = styled.h3`
     bottom: -8px;
     left: 50%;
     transform: translateX(-50%);  // 중앙 정렬
-    width: 50px;
-    height: 3px;
+    width: 80px;
+    height: 4px;
     background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
     border-radius: 2px;
+  }
+  
+  // 모바일 반응형
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
   }
 `
 
