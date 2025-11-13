@@ -12,17 +12,6 @@ const Section = styled.section`
   padding: 2rem 0;  // 상하 패딩
 `
 
-// 페이지 제목 - 그라데이션 텍스트 효과
-const PageTitle = styled.h2`
-  font-size: 2.5rem;
-  text-align: center;
-  margin-bottom: 3rem;
-  // 그라데이션 텍스트 효과
-  background: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-`
 
 // 콘텐츠 그리드 - 섹션들 간의 간격
 const ContentGrid = styled.div`
@@ -205,13 +194,6 @@ const CloseButton = styled.button`
     height: 35px;
     font-size: 1.2rem;
   }
-`
-
-// 이미지 캡션 (현재 사용되지 않음)
-const ImageCaption = styled.figcaption`
-  font-weight: 600;
-  color: #495057;
-  font-size: 1.1rem;
 `
 
 // 텍스트 카드 - 왼쪽 정렬
